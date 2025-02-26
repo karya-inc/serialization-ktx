@@ -3,7 +3,7 @@ echo "*********************************************************"
 echo "Running git pre-push hook. Running unit tests... "
 echo "*********************************************************"
 
-./gradlew testDebugUnitTest
+./gradlew test
 
 status=$?
 

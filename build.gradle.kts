@@ -26,7 +26,7 @@ tasks.test {
 kotlin.jvmToolchain(17)
 
 apply {
-    from(rootProject.file("tools/install-git-hooks.gradle"))
+    from(rootProject.file("install-git-hooks.gradle"))
 }
 
 /**
