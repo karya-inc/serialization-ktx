@@ -13,7 +13,7 @@ if [ "$status" = 0 ] ; then
 else
     echo "*********************************************************"
     echo 1>&2 "Unit tests failed"
-    echo "Please ensure tests pass before pushing. Run './gradlew testDebugUnitTest' to run unit tests locally"
+    echo "Please ensure tests pass before pushing. Run './gradlew test' to run unit tests locally"
     echo "*********************************************************"
     exit 1
 fi
