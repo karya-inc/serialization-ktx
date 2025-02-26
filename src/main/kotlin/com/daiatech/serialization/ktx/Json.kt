@@ -2,6 +2,14 @@ package com.daiatech.serialization.ktx
 
 import kotlinx.serialization.json.*
 
+val json = Json {
+    ignoreUnknownKeys = true
+    encodeDefaults = true
+    coerceInputValues = true
+    explicitNulls = false
+    classDiscriminator = "__type"
+}
+
 val JsonElement.asJsonObject: JsonObject?
     get() = try {
         this.jsonObject

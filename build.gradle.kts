@@ -25,6 +25,17 @@ tasks.test {
 
 kotlin.jvmToolchain(17)
 
+apply {
+    from(rootProject.file("tools/install-git-hooks.gradle"))
+}
+
+/**
+ * registers installGitHooks task to run before build, this
+ * way whenever a new clone is made, the first build copies
+ * pre-commit and commit-msg scripts to .git/hooks
+ */
+tasks.getByPath(":build").dependsOn(":installPreCommit")
+tasks.getByPath(":build").dependsOn(":installPrePush")
 
 // Publishing configuration
 

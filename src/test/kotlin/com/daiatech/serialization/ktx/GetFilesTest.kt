@@ -1,6 +1,5 @@
 package com.daiatech.serialization.ktx
 
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.jsonObject
@@ -11,7 +10,7 @@ import kotlin.test.assertNull
 class GetFilesTest {
     @Test
     fun `file should return the correct JsonElement when key exists`() {
-        val json = Json.parseToJsonElement(
+        val jsonData = json.parseToJsonElement(
             """
             {
                 "files": {
@@ -22,13 +21,13 @@ class GetFilesTest {
         """
         ).jsonObject
 
-        assertEquals(JsonPrimitive("image_data_1"), json.file("image1"))
-        assertEquals(JsonPrimitive(12345), json.file("image2"))
+        assertEquals(JsonPrimitive("image_data_1"), jsonData.file("image1"))
+        assertEquals(JsonPrimitive(12345), jsonData.file("image2"))
     }
 
     @Test
     fun `file should return null when key does not exist in files`() {
-        val json = Json.parseToJsonElement(
+        val jsonData = json.parseToJsonElement(
             """
             {
                 "files": {
@@ -38,12 +37,12 @@ class GetFilesTest {
         """
         ).jsonObject
 
-        assertNull(json.file("nonexistent"))
+        assertNull(jsonData.file("nonexistent"))
     }
 
     @Test
     fun `file should return null when files key is missing`() {
-        val json = Json.parseToJsonElement(
+        val jsonData = json.parseToJsonElement(
             """
             {
                 "otherKey": "some_value"
@@ -51,12 +50,12 @@ class GetFilesTest {
         """
         ).jsonObject
 
-        assertNull(json.file("image1"))
+        assertNull(jsonData.file("image1"))
     }
 
     @Test
     fun `file should return null when files is null`() {
-        val json = Json.parseToJsonElement(
+        val jsonData = json.parseToJsonElement(
             """
             {
                 "files": null
@@ -64,12 +63,12 @@ class GetFilesTest {
         """
         ).jsonObject
 
-        assertNull(json.file("image1"))
+        assertNull(jsonData.file("image1"))
     }
 
     @Test
     fun `file should work with nested JSON elements`() {
-        val json = Json.parseToJsonElement(
+        val jsonData = json.parseToJsonElement(
             """
             {
                 "files": {
@@ -89,6 +88,6 @@ class GetFilesTest {
             )
         )
 
-        assertEquals(expectedJsonObject, json.file("config"))
+        assertEquals(expectedJsonObject, jsonData.file("config"))
     }
 }

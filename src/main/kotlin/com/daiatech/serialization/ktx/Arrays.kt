@@ -7,7 +7,6 @@ val JsonElement.asStringArray: List<String>
         this.jsonArray.map { it.jsonPrimitive.content }
     } catch (e: IllegalArgumentException) {
         e.printStackTrace()
-        e.printStackTrace()
         listOf()
     }
 

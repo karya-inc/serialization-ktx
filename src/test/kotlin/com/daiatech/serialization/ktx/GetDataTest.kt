@@ -12,7 +12,7 @@ import kotlin.test.assertNull
 class GetDataTest {
     @Test
     fun `data should return the correct JsonElement when key exists`() {
-        val json = Json.parseToJsonElement(
+        val jsonData = json.parseToJsonElement(
             """
             {
                 "data": {
@@ -23,13 +23,13 @@ class GetDataTest {
         """
         ).jsonObject
 
-        assertEquals(JsonPrimitive("JohnDoe"), json.data("user"))
-        assertEquals(JsonPrimitive(30), json.data("age"))
+        assertEquals(JsonPrimitive("JohnDoe"), jsonData.data("user"))
+        assertEquals(JsonPrimitive(30), jsonData.data("age"))
     }
 
     @Test
     fun `data should return null when key does not exist in data`() {
-        val json = Json.parseToJsonElement(
+        val jsonData = json.parseToJsonElement(
             """
             {
                 "data": {
@@ -39,12 +39,12 @@ class GetDataTest {
         """
         ).jsonObject
 
-        assertNull(json.data("email"))
+        assertNull(jsonData.data("email"))
     }
 
     @Test
     fun `data should return null when data key is missing`() {
-        val json = Json.parseToJsonElement(
+        val jsonData = json.parseToJsonElement(
             """
             {
                 "otherKey": "value"
@@ -52,12 +52,12 @@ class GetDataTest {
         """
         ).jsonObject
 
-        assertNull(json.data("user"))
+        assertNull(jsonData.data("user"))
     }
 
     @Test
     fun `data should return null when data is explicitly null`() {
-        val json = Json.parseToJsonElement(
+        val jsonData = json.parseToJsonElement(
             """
             {
                 "data": null
@@ -65,12 +65,12 @@ class GetDataTest {
         """
         ).jsonObject
 
-        assertNull(json.data("user"))
+        assertNull(jsonData.data("user"))
     }
 
     @Test
     fun `data should retrieve nested JSON objects correctly`() {
-        val json = Json.parseToJsonElement(
+        val jsonData = json.parseToJsonElement(
             """
             {
                 "data": {
@@ -90,6 +90,6 @@ class GetDataTest {
             )
         )
 
-        assertEquals(expectedJsonObject, json.data("settings"))
+        assertEquals(expectedJsonObject, jsonData.data("settings"))
     }
 }

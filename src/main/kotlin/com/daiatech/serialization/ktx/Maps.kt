@@ -2,11 +2,10 @@ package com.daiatech.serialization.ktx
 
 import kotlinx.serialization.json.*
 
-
 val JsonElement.asStringRes: Map<String, String>
     get() = try {
         when (this) {
-            is JsonArray -> mapOf("DEFAULT" to Json.encodeToString(this))
+            is JsonArray -> mapOf("DEFAULT" to json.encodeToString(this))
 
             is JsonObject -> this.jsonObject.mapValues { it.value.jsonPrimitive.content }
 
@@ -14,7 +13,7 @@ val JsonElement.asStringRes: Map<String, String>
             is JsonPrimitive -> {
                 try {
                     // Try to parse as JSON encoded as a string
-                    val jsonObject = Json.parseToJsonElement(content).jsonObject
+                    val jsonObject = json.parseToJsonElement(content).jsonObject
                     jsonObject.mapValues { it.value.jsonPrimitive.content }
                 } catch (e: IllegalArgumentException) {
                     // Treat as a normal string
@@ -26,7 +25,7 @@ val JsonElement.asStringRes: Map<String, String>
         }
     } catch (e: IllegalArgumentException) {
         e.printStackTrace()
-        mapOf("DEFAULT" to Json.encodeToString(this))
+        mapOf("DEFAULT" to json.encodeToString(this))
     }
 
 /**
