@@ -1,6 +1,7 @@
 package com.daiatech.serialization.ktx
 
 import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.add
 import kotlinx.serialization.json.buildJsonArray
 import kotlin.test.Test
@@ -22,7 +23,21 @@ class AsIntArrayTest {
     }
 
     @Test
-    fun `asIntArray should return empty list if array contains non-string elements`() {
+    fun `asIntArray should give valid IntArray having null entry`() {
+        val jsonArray: JsonElement = buildJsonArray {
+            add(2)
+            add(4)
+            add(JsonNull)
+            add(6)
+        }
+
+        val result = jsonArray.asIntArray
+
+        assertEquals(listOf(2, 4, null, 6), result)
+    }
+
+    @Test
+    fun `asIntArray should return empty list if array contains non-int elements`() {
         val jsonArray: JsonElement = buildJsonArray {
             add("apple")
             add(123)
@@ -32,7 +47,7 @@ class AsIntArrayTest {
         val result = jsonArray.asIntArray
 
         // This will trigger NumberFormatException internally, so the result should be empty
-        assertEquals(listOf("apple", 123, true), result)
+        assertEquals(listOf(), result)
     }
 
     @Test
