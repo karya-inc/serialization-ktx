@@ -6,7 +6,7 @@ A Kotlin serialization utility library.
 Add the following dependency to your `build.gradle.kts` file:
 ```kotlin
 dependencies {
-    implementation("io.github.karya-inc:serialization-ktx:0.0.1")
+    implementation("io.github.karya-inc:serialization-ktx:0.0.3")
 }
 ```
 
@@ -15,7 +15,7 @@ If using Maven, add this to `pom.xml`:
 <dependency>
   <groupId>io.github.karya-inc</groupId>
   <artifactId>serialization-ktx</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.3</version>
 </dependency>
 ```
 

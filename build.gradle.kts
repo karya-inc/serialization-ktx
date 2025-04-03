@@ -51,7 +51,7 @@ tasks.register<Jar>("javadocJar") {
 
 
 val publishGroupId = "io.github.karya-inc"
-val publishArtifactVersion = "0.0.2"
+val publishArtifactVersion = "0.0.3"
 val publishArtifactId = "serialization-ktx"
 
 group = publishGroupId
