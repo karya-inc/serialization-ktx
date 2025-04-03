@@ -39,3 +39,11 @@ val JsonElement.asJsonArray
         e.printStackTrace()
         null
     }
+
+val JsonElement.asIntArray: List<Int>
+    get() = try {
+        this.jsonArray.map { it.jsonPrimitive.content.toInt()}
+    }catch (e: IllegalArgumentException){
+        e.printStackTrace()
+        listOf()
+    }
