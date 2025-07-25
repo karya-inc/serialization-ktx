@@ -98,8 +98,8 @@ publishing {
     }
 }
 
-val ossrhToken: String by extra("")
-val ossrhTokenPassword: String by extra("")
+val mvnCentralUsername: String by extra("")
+val mvnCentralPassword: String by extra("")
 val sonatypeStagingProfileId: String by extra("")
 val signingKeyId: String by extra("")
 val signingPassword: String by extra("")
@@ -119,11 +119,11 @@ nexusPublishing {
     repositories {
         sonatype {
             stagingProfileId = sonatypeStagingProfileId
-            username = ossrhToken
-            password = ossrhTokenPassword
+            username = mvnCentralUsername
+            password = mvnCentralPassword
 
-            nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
-            snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+            nexusUrl.set(uri("https://ossrh-staging-api.central.sonatype.com/service/local/"))
+            snapshotRepositoryUrl.set(uri("https://central.sonatype.com/repository/maven-snapshots/"))
         }
     }
 }
