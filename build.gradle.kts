@@ -1,50 +1,70 @@
-import java.util.Properties
+import com.vanniktech.maven.publish.SonatypeHost
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 plugins {
-    kotlin("jvm") version "2.0.21"
-    kotlin("plugin.serialization") version "2.1.0"
-    `maven-publish`
-    id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
-    id("signing")
-    java
+    id("org.jetbrains.kotlin.multiplatform") version "2.2.0"
+    id("com.android.kotlin.multiplatform.library") version "8.10.1"
+    id("com.android.lint") version "8.10.1"
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.2.0"
+    id("maven-publish")
+    id("com.vanniktech.maven.publish") version "0.30.0"
     id("org.jetbrains.dokka") version "1.9.20"
 }
 
-dependencies {
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
-    testImplementation(kotlin("test"))
-}
+kotlin {
+    androidLibrary {
+        namespace = "com.daiatech.serialization.ktx"
+        compileSdk = 36
+        minSdk = 24
 
-tasks.test {
-    useJUnitPlatform()
-}
+        withHostTestBuilder {
+        }
 
-kotlin.jvmToolchain(17)
+        withDeviceTestBuilder {
+            sourceSetTreeName = "test"
+        }.configure {
+            instrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        }
+    }
+
+    jvm()
+
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        browser()
+        binaries.executable()
+    }
+
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64()
+    ).forEach { iosTarget ->
+        iosTarget.binaries.framework {
+            baseName = "specificationKit"
+        }
+    }
+
+    sourceSets {
+        commonMain {
+            kotlin.srcDir("src/main/kotlin")
+            dependencies {
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
+            }
+        }
+
+        commonTest {
+            kotlin.srcDir("src/test/kotlin")
+            dependencies{
+                implementation("org.jetbrains.kotlin:kotlin-test:2.2.0")
+            }
+        }
+    }
+}
 
 apply {
     from(rootProject.file("install-git-hooks.gradle"))
 }
-
-/**
- * registers installGitHooks task to run before build, this
- * way whenever a new clone is made, the first build copies
- * pre-commit and commit-msg scripts to .git/hooks
- */
-tasks.getByPath(":build").dependsOn(":installPreCommit")
-tasks.getByPath(":build").dependsOn(":installPrePush")
-
-// Publishing configuration
-
-tasks.register<Jar>("sourcesJar") {
-    archiveClassifier.set("sources")
-    from(sourceSets.main.get().allSource)
-}
-
-tasks.register<Jar>("javadocJar") {
-    archiveClassifier.set("javadoc")
-    from(tasks.dokkaHtml) // Generates Javadoc using Dokka (for Kotlin projects)
-}
-
 
 val publishGroupId = "io.github.karya-inc"
 val publishArtifactVersion = "0.0.4"
@@ -53,82 +73,40 @@ val publishArtifactId = "serialization-ktx"
 group = publishGroupId
 version = publishArtifactVersion
 
-publishing {
-    publications {
-        create<MavenPublication>("maven") {
-            groupId = publishGroupId
-            artifactId = publishArtifactId
-            version = publishArtifactVersion
+mavenPublishing {
+    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+    signAllPublications()
 
-            afterEvaluate { from(components["kotlin"]) }
-            artifact(tasks.named("sourcesJar"))
-            artifact(tasks.named("javadocJar"))
+    coordinates(
+        groupId = publishGroupId,
+        artifactId = publishArtifactId,
+        version = publishArtifactVersion
+    )
 
-            pom {
-                name.set(publishArtifactId)
-                description.set("A Kotlin serialization utility library")
-                url.set("hhttps://github.com/karya-inc/serialization-ktx.git")
+    pom {
+        name.set(publishArtifactId)
+        description.set("A Kotlin serialization utility library")
+        url.set("hhttps://github.com/karya-inc/serialization-ktx.git")
 
-                licenses {
-                    license {
-                        name.set("GNU license")
-                        url.set("https://opensource.org/license/gpl-3-0")
-                    }
-                }
-
-                developers {
-                    developer {
-                        id.set("divyansh@karya.in")
-                        name.set("Divyansh Kushwaha")
-                        email.set("divyansh@karya.in")
-                    }
-                }
-
-                scm {
-                    connection.set("scm:git:ssh://git@github.com/karya-inc/serialization-ktx.git")
-                    developerConnection.set("scm:git:ssh://git@github.com/karya-inc/serialization-ktx.git")
-                    url.set("https://github.com/karya-inc/serialization-ktx.git")
-                }
+        licenses {
+            license {
+                name.set("GNU license")
+                url.set("https://opensource.org/license/gpl-3-0")
             }
         }
-    }
-}
 
-val mvnCentralUsername: String by extra("")
-val mvnCentralPassword: String by extra("")
-val sonatypeStagingProfileId: String by extra("")
-val signingKeyId: String by extra("")
-val signingPassword: String by extra("")
-val signingKey: String by extra("")
+        developers {
+            developer {
+                id.set("divyansh@karya.in")
+                name.set("Divyansh Kushwaha")
+                email.set("divyansh@karya.in")
+            }
+        }
 
-val secretPropsFile = rootProject.file("local.properties")
-val properties = Properties()
-
-if (secretPropsFile.exists()) {
-    secretPropsFile.inputStream().use { properties.load(it) }
-    properties.forEach { (name, value) ->
-        extra[name.toString()] = value
-    }
-}
-
-nexusPublishing {
-    repositories {
-        sonatype {
-            stagingProfileId = sonatypeStagingProfileId
-            username = mvnCentralUsername
-            password = mvnCentralPassword
-
-            nexusUrl.set(uri("https://ossrh-staging-api.central.sonatype.com/service/local/"))
-            snapshotRepositoryUrl.set(uri("https://central.sonatype.com/repository/maven-snapshots/"))
+        scm {
+            connection.set("scm:git:ssh://git@github.com/karya-inc/serialization-ktx.git")
+            developerConnection.set("scm:git:ssh://git@github.com/karya-inc/serialization-ktx.git")
+            url.set("https://github.com/karya-inc/serialization-ktx.git")
         }
     }
-}
-
-signing {
-    useInMemoryPgpKeys(
-        signingKeyId,
-        signingKey,
-        signingPassword
-    )
-    sign(publishing.publications)
 }
