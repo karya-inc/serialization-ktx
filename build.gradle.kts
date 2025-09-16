@@ -15,7 +15,7 @@ kotlin {
     androidLibrary {
         namespace = "com.daiatech.serialization.ktx"
         compileSdk = 36
-        minSdk = 24
+        minSdk = 21
 
         withHostTestBuilder {
         }
