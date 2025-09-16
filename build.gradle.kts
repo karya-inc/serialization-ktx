@@ -10,10 +10,6 @@ plugins {
     id("org.jetbrains.dokka") version "1.9.20"
 }
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
     testImplementation(kotlin("test"))
