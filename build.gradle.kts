@@ -68,7 +68,7 @@ apply {
 
 
 group = "io.github.karya-inc"
-version = "0.0.5"
+version = "0.0.6"
 mavenPublishing {
     val artifactId = "serialization-ktx"
     publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
