@@ -83,3 +83,38 @@ fun JsonObject.data(key: String): JsonElement? {
 fun JsonObject.file(key: String): JsonElement? {
     return this["files"]?.asJsonObject?.get(key)
 }
+
+/**
+ * Retrieves a specific JSON element from the "scratch" object within a given `JsonObject`.
+ *
+ * This function is an extension for `JsonObject` that attempts to fetch a value
+ * associated with the specified `key` from a nested "scratch" object inside the main JSON structure.
+ * The "scratch" object is typically used for temporary or intermediate data storage.
+ *
+ * @receiver The `JsonObject` instance containing a "scratch" key.
+ * @param key The key whose associated `JsonElement` needs to be retrieved from the "scratch" object.
+ * @return The `JsonElement` corresponding to the specified `key` within "scratch",
+ *         or `null` if "scratch" is missing, not a `JsonObject`, or does not contain the `key`.
+ *
+ * @throws IllegalStateException if "scratch" exists but is not a `JsonObject`,
+ *         as `jsonObject` will throw an exception in such cases.
+ *
+ * Example Usage:
+ * ```
+ * val json = Json.parseToJsonElement("""
+ *     {
+ *         "scratch": {
+ *             "tempValue": "temporary_data",
+ *             "counter": 42
+ *         }
+ *     }
+ * """).jsonObject
+ *
+ * val tempValue = json.scratch("tempValue") // Returns JsonPrimitive("temporary_data")
+ * val counter = json.scratch("counter")     // Returns JsonPrimitive(42)
+ * val missingKey = json.scratch("missing")  // Returns null
+ * ```
+ */
+fun JsonObject.scratch(key: String): JsonElement? {
+    return this["scratch"]?.asJsonObject?.get(key)
+}
